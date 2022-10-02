@@ -1,7 +1,15 @@
 //imports
 
 const express = require("express");
+const cors = require('cors');
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true, //access-control-allow-credentials:true
+    optionSuccessStatus: 200
+}
 const app = express();
+app.use(cors(corsOptions));
+
 var bodyParser = require("body-parser");
 const path = require('path');
 
@@ -20,14 +28,6 @@ app.use("/layers", express.static(__dirname + "layers/Iris"));
 app.use("/layers", express.static(__dirname + "layers/Shine"));
 app.use("/layers", express.static(__dirname + "layers/Top lid"));
 
-app.use(express.static(__dirname + '/build'));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'))
-})
-
-app.use("/api", require("./routes/ruta")); 
-
-
+app.use("/api", require("./routes/ruta"));
 
 app.listen(port, () => console.info(`Listening on port ${port}`));

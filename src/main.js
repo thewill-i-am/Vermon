@@ -5,8 +5,12 @@ const db = require("../database/conexion");
 const app = express();
 var bodyParser = require("body-parser");
 
+var cors = require('cors')
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "100mb" }));
+app.use(cors()) // Use this after the variable declaration
 
 const port = 3001;
 
