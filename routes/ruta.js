@@ -21,7 +21,7 @@ router.post("/crearFormularioSolicitud", async(req, res, next) => {
     const formularioSolicitud = new FormularioSolicitud();
     //TODO: Pasar parametros
     // await formularioSolicitud.insert();
-    res.sendStatus(200);
+    res.sendStatus(200);+
 });
 
 
