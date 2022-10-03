@@ -40,7 +40,20 @@ class FormularioSolicitud {
     }
   };
 }
-
+class Evidencia {
+  insert = async (Documento) => {
+    try {
+      await db.query(
+        `INSERT INTO EVIDENCIA (Documento) VALUES ('${Documento}')`
+        
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  
+}
+  
 class Usuario {
   insert = async (nombre, email) => {
     try {
@@ -53,4 +66,7 @@ class Usuario {
   };
 }
 
-module.exports = {Usuario, FormularioSolicitud, Empresa};
+
+
+
+module.exports = {Usuario, FormularioSolicitud, Evidencia, Empresa};

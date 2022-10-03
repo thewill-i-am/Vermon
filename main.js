@@ -24,6 +24,7 @@ app.use("/layers", express.static(__dirname + "layers/background"));
 app.use("/layers", express.static(__dirname + "layers/Bottom Lid"));
 app.use("/layers", express.static(__dirname + "layers/Eye color"));
 app.use("/layers", express.static(__dirname + "layers/Eyeball"));
+app.use("/layers", express.static(__dirname + "layers/Goo"));
 app.use("/layers", express.static(__dirname + "layers/Iris"));
 app.use("/layers", express.static(__dirname + "layers/Shine"));
 app.use("/layers", express.static(__dirname + "layers/Top lid"));

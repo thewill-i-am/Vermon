@@ -6,6 +6,7 @@ const layersOrder = [
   { name: "Background" },
   { name: "Eyeball" },
   { name: "Eye color" },
+  { name: "Goo" },
   { name: "Iris" },
   { name: "Shine" },
   { name: "Bottom lid" },
