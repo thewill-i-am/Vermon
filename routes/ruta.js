@@ -136,4 +136,27 @@ router.post("/evidencia", async (req, res, next) => {
     next();
 });
 
+// TODO: Implementar esta logica despues de la creacion de la empresa
+router.post("/usuario", async (req, res, next) => {
+    try
+    {
+        var usuario = await Usuario.create({
+            type: req.body.imagen,
+            nombre: req.body.nombre,
+            correo: req.body.correo,
+            password: 'password',
+            esAdminEmpresa: req.body.esAdminEmpresa,
+            idEmpresa: req.body.idEmpresa
+        });
+        res.status(200).json({ 'success': true, 'Usuario': usuario })
+
+
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
+
+    next();
+});
+
 module.exports = router;
