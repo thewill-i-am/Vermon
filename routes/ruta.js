@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const startCreating = require("../src/logic/nft");
-const { Usuario, FormularioSolicitud, Evidencia, Empresa} = require("../database/db");
+const { Usuario, FormularioSolicitud, Evidencia, Empresa, FormularioUsuarioEmpresa} = require("../database/db");
 
 router.get("/generador", async(req, res) => {
     console.log("llego aqui")
@@ -42,6 +42,17 @@ router.post("/conectarUsuarioGoogle", async(req, res, next) => {
     //TODO: Pasar parametros
     // await usuario.insert();
     res.sendStatus(200);
+}); 
+
+router.post("/crearFormularioUsuarioEmpresa", async(req, res, next) => {
+    const formularioUsuarioEmpresa = new FormularioUsuarioEmpresa();
+    //TODO: Pasar parametros
+
+    console.log(req.body)
+    await formularioUsuarioEmpresa.insert(req.body.Id,req.body.Nombre);
+    res.sendStatus(200);
+   
 });
+
 
 module.exports = router;

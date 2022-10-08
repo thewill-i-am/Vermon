@@ -9,26 +9,34 @@ const corsOptions = {
 }
 const app = express();
 app.use(cors(corsOptions));
+const db = require('./database/db');
 
-var bodyParser = require("body-parser");
-const path = require('path');
+(async () => {
+    await db.sequelize.sync()
+})();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: "100mb" }));
+db.models.Usuario
 
-const port = 3001;
+// var bodyParser = require("body-parser");
+// const path = require('path');
 
-//static files
-app.use(express.static("layers"));
-app.use("/layers", express.static(__dirname + "layers/background"));
-app.use("/layers", express.static(__dirname + "layers/Bottom Lid"));
-app.use("/layers", express.static(__dirname + "layers/Eye color"));
-app.use("/layers", express.static(__dirname + "layers/Eyeball"));
-app.use("/layers", express.static(__dirname + "layers/Goo"));
-app.use("/layers", express.static(__dirname + "layers/Iris"));
-app.use("/layers", express.static(__dirname + "layers/Shine"));
-app.use("/layers", express.static(__dirname + "layers/Top lid"));
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json({ limit: "100mb" }));
 
-app.use("/api", require("./routes/ruta"));
+// const port = 3001;
 
-app.listen(port, () => console.info(`Listening on port ${port}`));
+// //static files
+// app.use(express.static("layers"));
+// app.use("/layers", express.static(__dirname + "layers/background"));
+// app.use("/layers", express.static(__dirname + "layers/Bottom Lid"));
+// app.use("/layers", express.static(__dirname + "layers/Eye color"));
+// app.use("/layers", express.static(__dirname + "layers/Eyeball"));
+// app.use("/layers", express.static(__dirname + "layers/Goo"));
+// app.use("/layers", express.static(__dirname + "layers/Iris"));
+// app.use("/layers", express.static(__dirname + "layers/Shine"));
+// app.use("/layers", express.static(__dirname + "layers/Top lid"));
+
+// app.use("/api", require("./routes/ruta"));
+
+// app.listen(port, () => console.info(`Listening on port ${port}`));
+
