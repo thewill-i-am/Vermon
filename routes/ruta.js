@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const startCreating = require("../src/logic/nft");
+const bcrypt = require("bcrypt");
+
 const {
     models: {
         Usuario,
@@ -53,10 +55,12 @@ router.post("/empresa/:id", async (req, res, next) => {
         var empresa = await Empresa.create({
             idSolicitudEmpresa: sol.id
         })
+        const salt = await bcrypt.genSalt(10);
+
         var usuario = await Usuario.create({
             nombre: req.body.nombre,
             correo: req.body.correo,
-            password: 'password', // TODO: Encriptar los password con MD5
+            password: await bcrypt.hash('password', salt),
             esAdminEmpresa: false,
             idEmpresa: empresa.id
 
@@ -161,27 +165,30 @@ router.post("/evidencia", async (req, res, next) => {
     next();
 });
 
-// TODO: Encriptar los password con MD5
 router.post("/cambioDePassword", async (req, res, next) => {
     try
     {
-        var usuario = await Usuario.create({
-            password: req.body.password,
+        var usuario = await Usuario.findOne({ where: { correo: req.body.correo } });
+        const salt = await bcrypt.genSalt(10);
+        await usuario.set({
+            password: await bcrypt.hash(usuario.password, salt),
         });
-        res.status(200).json({ 'success': true, 'Usuario': usuario })
+        await usuario.save()
+        res.status(200).json({ 'success': true, 'Usuario': "password cambiado" })
     } catch (err)
     {
+        console.error(err)
         res.status(500).send({ 'success': false, 'error': err });
     }
     next();
 });
 
-// TODO: Encriptar los password con MD5
 router.post("/login", async (req, res, next) => {
     try
     {
-        var usuario = await Usuario.findOne({ where: { correo: req.body.correo, password: req.body.password } });
-        if (usuario)
+        var usuario = await Usuario.findOne({ where: { correo: req.body.correo } });
+        const validPassword = await bcrypt.compare(req.body.password, usuario.password);
+        if (validPassword)
         {
             res.status(200).json({ 'success': true, 'Usuario': usuario })
         } else
