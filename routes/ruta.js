@@ -84,15 +84,16 @@ router.post("/NFT/:id", async (req, res, next) => {
         })
         await evi.save()
 
+        var creacion = startCreating()
+
         if (req.body.estaAprobado)
         {
-            var creacion = startCreating()
-            var nft = await Nft.create({
+            await Nft.create({
                 metadatos: JSON.stringify({ "imagen": (await creacion).dat, "token": (await creacion).textPadre }),
                 idEvidencia: evi.id
             });
 
-            res.status(200).json({ 'success': true, 'NFT': "aprobado" })
+            res.status(200).json({ 'success': true, 'NFT': (await creacion).dat })
 
         }
         res.status(200).json({ 'success': true, 'NFT': "rechazado" })
@@ -154,7 +155,7 @@ router.post("/evidencia", async (req, res, next) => {
             video: req.body.video,
             pdf: req.body.pdf,
             idEmpresaSolicitudNFT: empresaSolicitudNFT.id,
-            estaAprobada: 0
+            estaAprobado: 0
         });
         res.status(200).json({ 'success': true, 'evidencia': evidencias })
     } catch (err)
