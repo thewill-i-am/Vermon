@@ -56,7 +56,7 @@ router.post("/empresa/:id", async (req, res, next) => {
         var usuario = await Usuario.create({
             nombre: req.body.nombre,
             correo: req.body.correo,
-            password: 'password',
+            password: 'password', // TODO: Encriptar los password con MD5
             esAdminEmpresa: false,
             idEmpresa: empresa.id
 
@@ -161,26 +161,37 @@ router.post("/evidencia", async (req, res, next) => {
     next();
 });
 
-// TODO: Implementar esta logica despues de la creacion de la empresa
-router.post("/usuario", async (req, res, next) => {
+// TODO: Encriptar los password con MD5
+router.post("/cambioDePassword", async (req, res, next) => {
     try
     {
         var usuario = await Usuario.create({
-            type: req.body.imagen,
-            nombre: req.body.nombre,
-            correo: req.body.correo,
-            password: 'password',
-            esAdminEmpresa: req.body.esAdminEmpresa,
-            idEmpresa: req.body.idEmpresa
+            password: req.body.password,
         });
         res.status(200).json({ 'success': true, 'Usuario': usuario })
-
-
     } catch (err)
     {
         res.status(500).send({ 'success': false, 'error': err });
     }
+    next();
+});
 
+// TODO: Encriptar los password con MD5
+router.post("/login", async (req, res, next) => {
+    try
+    {
+        var usuario = await Usuario.findOne({ where: { correo: req.body.correo, password: req.body.password } });
+        if (usuario)
+        {
+            res.status(200).json({ 'success': true, 'Usuario': usuario })
+        } else
+        {
+            throw "User not found"
+        }
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
     next();
 });
 
