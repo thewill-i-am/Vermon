@@ -15,6 +15,7 @@ const {
     },
 } = require("../database/db");
 
+
 router.get("/generador", async (req, res) => {
     var NFT = await startCreating();
     res.send({ imagenes: NFT.dat, jsonContract: NFT.textPadre });
@@ -52,7 +53,16 @@ router.post("/empresa/:id", async (req, res, next) => {
         var empresa = await Empresa.create({
             idSolicitudEmpresa: sol.id
         })
-        res.status(200).json({ 'success': true, 'empresa': empresa })
+        var usuario = await Usuario.create({
+            nombre: req.body.nombre,
+            correo: req.body.correo,
+            password: 'password',
+            esAdminEmpresa: false,
+            idEmpresa: empresa.id
+
+        });
+
+        res.status(200).json({ 'success': true, 'empresa': empresa, "usuario": usuario })
     } catch (err)
     {
         res.status(500).send({ 'success': false, 'error': err });
@@ -61,14 +71,28 @@ router.post("/empresa/:id", async (req, res, next) => {
     next();
 });
 
-router.post("/NFT", async (req, res, next) => {
+router.post("/NFT/:id", async (req, res, next) => {
     try
     {
-        var nft = await Nft.create({
-            metadatos: req.body.metadatos,
-            idEvidencia: req.body.idEvidencia
-        });
-        res.status(200).json({ 'success': true, 'NFT': nft })
+        var evi = await Evidencias.findOne({ where: { id: req.params.id } });
+        evi.set({
+            estaAprobado: req.body.estaAprobado
+        })
+        await evi.save()
+
+        if (req.body.estaAprobado)
+        {
+            var creacion = startCreating()
+            var nft = await Nft.create({
+                metadatos: JSON.stringify({ "imagen": (await creacion).dat, "token": (await creacion).textPadre }),
+                idEvidencia: evi.id
+            });
+
+            res.status(200).json({ 'success': true, 'NFT': "aprobado" })
+
+        }
+        res.status(200).json({ 'success': true, 'NFT': "rechazado" })
+
     } catch (err)
     {
         res.status(500).send({ 'success': false, 'error': err });
@@ -88,6 +112,7 @@ router.post("/solicitudNFT", async (req, res, next) => {
         res.status(200).json({ 'success': true, 'NFT': solicitudNFT })
     } catch (err)
     {
+        console.log(err)
         res.status(500).send({ 'success': false, 'error': err });
     }
 
@@ -118,14 +143,14 @@ router.post("/empresaSolicitudNFT", async (req, res, next) => {
 router.post("/evidencia", async (req, res, next) => {
     try
     {
-        var empresaSolicitudNFT = await EmpresaSolicitudNFT.findOne({ where: { id: req.body.idEvidencia } });
+        var empresaSolicitudNFT = await EmpresaSolicitudNFT.findOne({ where: { id: req.body.idEmpresaSolicitudNFT } });
 
         var evidencias = await Evidencias.create({
             imagen: req.body.imagen,
             video: req.body.video,
             pdf: req.body.pdf,
-            idEmpresaSolicitud: empresaSolicitudNFT.id,
-            estaAprobada: req.body.estaAprobada
+            idEmpresaSolicitudNFT: empresaSolicitudNFT.id,
+            estaAprobada: 0
         });
         res.status(200).json({ 'success': true, 'evidencia': evidencias })
     } catch (err)
