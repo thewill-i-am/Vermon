@@ -202,4 +202,40 @@ router.post("/login", async (req, res, next) => {
     next();
 });
 
+router.get("/obtenerSolicitudesEmpresaPendientes", async (req, res, next) => {
+    try
+    {
+        var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({ where: { estaAprobado: false } });
+        res.status(200).json({ 'success': true, 'solicitudEmpresaPendientes': solicitudesEmpresaPendientes })
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
+    next();
+});
+
+router.get("/obtenerSolicitudesEmpresaNFTPendientes", async (req, res, next) => {
+    try
+    {
+        var solicitudesEmpresaPendientes = await EmpresaSolicitudNFT.findAll({ where: { estaAprobado: false } });
+        res.status(200).json({ 'success': true, 'solicitudEmpresaNFTPendientes': solicitudesEmpresaPendientes })
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
+    next();
+});
+
+router.get("/obtenerSolicitudesEvidenciasPendientes", async (req, res, next) => {
+    try
+    {
+        var solicitudesEmpresaPendientes = await Evidencias.findAll({ where: { estaAprobado: false } });
+        res.status(200).json({ 'success': true, 'evidenciasPendientes': solicitudesEmpresaPendientes })
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
+    next();
+});
+
 module.exports = router;
