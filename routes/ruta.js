@@ -203,10 +203,10 @@ router.post("/login", async (req, res, next) => {
     next();
 });
 
-router.get("/obtenerSolicitudesEmpresaPendientes", async (req, res, next) => {
+router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({ where: { estaAprobado: false } });
+        var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({ where: { estaAprobado: req.body.estaAprobado } });
         res.status(200).json({ 'success': true, 'solicitudEmpresaPendientes': solicitudesEmpresaPendientes })
     } catch (err)
     {
@@ -215,10 +215,10 @@ router.get("/obtenerSolicitudesEmpresaPendientes", async (req, res, next) => {
     next();
 });
 
-router.get("/obtenerSolicitudesEmpresaNFTPendientes", async (req, res, next) => {
+router.get("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await EmpresaSolicitudNFT.findAll({ where: { estaAprobado: false } });
+        var solicitudesEmpresaPendientes = await EmpresaSolicitudNFT.findAll({ where: { estaAprobado: req.body.estaAprobado } });
         res.status(200).json({ 'success': true, 'solicitudEmpresaNFTPendientes': solicitudesEmpresaPendientes })
     } catch (err)
     {
@@ -227,11 +227,23 @@ router.get("/obtenerSolicitudesEmpresaNFTPendientes", async (req, res, next) => 
     next();
 });
 
-router.get("/obtenerSolicitudesEvidenciasPendientes", async (req, res, next) => {
+router.get("/obtenerSolicitudesEvidencias", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await Evidencias.findAll({ where: { estaAprobado: false } });
+        var solicitudesEmpresaPendientes = await Evidencias.findAll({ where: { estaAprobado: req.body.estaAprobado } });
         res.status(200).json({ 'success': true, 'evidenciasPendientes': solicitudesEmpresaPendientes })
+    } catch (err)
+    {
+        res.status(500).send({ 'success': false, 'error': err });
+    }
+    next();
+});
+
+router.get("/obtenerTodasLasEmpresas", async (req, res, next) => {
+    try
+    {
+        var solicitudesEmpresaPendientes = await Empresa.findAll();
+        res.status(200).json({ 'success': true, 'Empresas': solicitudesEmpresaPendientes })
     } catch (err)
     {
         res.status(500).send({ 'success': false, 'error': err });
