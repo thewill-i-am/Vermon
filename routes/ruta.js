@@ -315,4 +315,19 @@ router.post("/verificarSiExisteToken", async (req, res, next) => {
     next();
 });
 
+
+router.get("/tipoNFT", async (req, res, next) => {
+    try
+    {
+        var tipoNFT = await TipoNFT.findAll();
+        res.status(200).json({ success: true, TipoNFT: tipoNFT });
+    } catch (err)
+    {
+        console.log(err);
+        res.status(500).send({ success: false, error: err });
+    }
+
+    next();
+});
+
 module.exports = router;
