@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         video: DataTypes.STRING,
         pdf: DataTypes.STRING,
         estaAprobado: DataTypes.TINYINT,
-        idEmpresaSolicitudNFT: DataTypes.INTEGER,
+        idSolicitudNFT: DataTypes.INTEGER,
     }, {
         freezeTableName: true,
         timestamps: false,
