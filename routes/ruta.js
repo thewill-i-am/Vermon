@@ -109,10 +109,15 @@ router.post("/NFT/:id", async (req, res, next) => {
 router.post("/solicitudNFT", async (req, res, next) => {
     try
     {
+        var token = varificarToken(req.headers["authorization"]);
+        var usuario = await Usuario.findOne({ where: { correo: token.name } });
         var solicitudNFT = await SolicitudNFT.create({
             pdf: req.body.pdf,
             idTipoNFT: Number(req.body.idTipoNFT),
+            idEmpresa: usuario.idEmpresa,
+            estaAprobado: false
         });
+        
         res.status(200).json({ success: true, NFT: solicitudNFT });
     } catch (err)
     {
@@ -280,40 +285,35 @@ router.get("/obtenerTodasLasEmpresas", async (req, res, next) => {
     next();
 });
 
-router.post("/verificarSiExisteToken", async (req, res, next) => {
+const varificarToken = (header) => {
     try
     {
-        const token = req.headers["authorization"];
+        const token = header;
 
         if (token.includes("token="))
         {
-
-
+            var usuario = {}
             jwt.verify(token.split("token=")[token.split("token=").length - 1], "elbotas", (err, user) => {
                 if (err)
                 {
-                    res.status(403).json({ msg: "no valido log in", success: false });
+                    console.log("LLego aqui primer erro")
                 } else
                 {
-                    console.log("subiendo archivo");
-
-                    res
-                        .status(200)
-                        .json({ msg: "lito perez", success: true, usuario: user });
+                    usuario = user;
                 }
             });
+        
+            return usuario;
+
         } else
         {
-            console.error()
-            res.status(403).json({ msg: "no valido log in", success: false });
-
+            console.log("no valido")
         }
     } catch (err)
     {
-        res.status(500).send({ success: false, error: err });
+        console.log("error general")
     }
-    next();
-});
+};
 
 
 router.get("/tipoNFT", async (req, res, next) => {

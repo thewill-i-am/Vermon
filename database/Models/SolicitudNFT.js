@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         pdf: DataTypes.STRING,
         idTipoNFT: DataTypes.INTEGER,
+        estaAprobado: DataTypes.TINYINT,
+        idEmpresa: DataTypes.INTEGER,
     }, {
         freezeTableName: true,
         timestamps: false,
