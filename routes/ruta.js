@@ -117,7 +117,7 @@ router.post("/solicitudNFT", async (req, res, next) => {
             idEmpresa: usuario.idEmpresa,
             estaAprobado: false
         });
-        
+
         res.status(200).json({ success: true, NFT: solicitudNFT });
     } catch (err)
     {
@@ -237,20 +237,21 @@ router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
     next();
 });
 
-router.get("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
+router.post("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await EmpresaSolicitudNFT.findAll({
-            where: { estaAprobado: req.body.estaAprobado },
+        var token = varificarToken(req.headers["authorization"]);
+        var usuario = await Usuario.findOne({ where: { correo: token.name } });
+        var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll({
+            where: { idEmpresa: usuario.idEmpresa },
         });
-        res.status(200).json({
-            success: true,
-            solicitudEmpresaNFTPendientes: solicitudesEmpresaPendientes,
-        });
+        res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa });
     } catch (err)
     {
+        console.log(err);
         res.status(500).send({ success: false, error: err });
     }
+
     next();
 });
 
@@ -302,7 +303,6 @@ const varificarToken = (header) => {
                     usuario = user;
                 }
             });
-        
             return usuario;
 
         } else
@@ -329,5 +329,6 @@ router.get("/tipoNFT", async (req, res, next) => {
 
     next();
 });
+
 
 module.exports = router;

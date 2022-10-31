@@ -92,8 +92,8 @@ const addAttributes = (_element) => {
     });
 };
 
-const loadLayerImg = async(_layer) => {
-    return new Promise(async(resolve) => {
+const loadLayerImg = async (_layer) => {
+    return new Promise(async (resolve) => {
         const image = await loadImage(`${_layer.selectedElement.path}`);
         resolve({ layer: _layer, loadedImage: image });
     });
@@ -144,16 +144,18 @@ const saveMetaDataSingleFile = (_editionCount) => {
     );
 };
 
-const startCreating = async() => {
+const startCreating = async () => {
     let editionCount = 1;
     let failedCount = 0;
     const layers = layersSetup(layersOrder);
     var sanPadre = "vacio";
     var textPadre = "vacio";
 
-    while (editionCount <= editionSize) {
+    while (editionCount <= editionSize)
+    {
         let newDna = createDna(layers);
-        if (isDnaUnique(dnaList, newDna)) {
+        if (isDnaUnique(dnaList, newDna))
+        {
             let results = constructLayerToDna(newDna, layers);
             let loadedElements = [];
 
@@ -163,7 +165,8 @@ const startCreating = async() => {
             var datoPadre;
             await Promise.all(loadedElements).then((elementArray) => {
                 ctx.clearRect(0, 0, format.width, format.height);
-                if (background.generate) {
+                if (background.generate)
+                {
                     drawBackground();
                 }
                 elementArray.forEach((element) => {
@@ -185,10 +188,12 @@ const startCreating = async() => {
             console.log("testing");
             dnaList.push(newDna);
             editionCount++;
-        } else {
+        } else
+        {
             console.log("DNA exists!");
             failedCount++;
-            if (failedCount >= uniqueDnaTorrance) {
+            if (failedCount >= uniqueDnaTorrance)
+            {
                 console.log(
                     `You need more layers or elements to generate ${editionSize} artworks!`
                 );
