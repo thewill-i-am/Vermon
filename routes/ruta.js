@@ -17,6 +17,7 @@ const {
         EmpresaSolicitudNFT,
     },
 } = require("../database/db");
+const db = require("../database/db");
 
 router.get("/generador", async (req, res) => {
     var NFT = await startCreating();
@@ -109,18 +110,17 @@ router.post("/NFT/:id", async (req, res, next) => {
         if (req.body.estaAprobado)
         {
             await Nft.create({
-                metadatos: JSON.stringify({
-                    imagen: (await creacion).dat,
-                    token: (await creacion).textPadre,
-                }),
+                metadatos:  (await creacion).textPadre,
                 idEvidencia: evi.id,
+                imagen:  (await creacion).dat[0]
             });
 
-            res.status(200).json({ success: true, NFT: (await creacion).dat });
+            res.status(200).json({ success: true, NFT: (await creacion).dat[0] });
         }
         res.status(200).json({ success: true, NFT: "rechazado" });
     } catch (err)
-    {
+    {   
+        console.error(err);
         res.status(500).send({ success: false, error: err });
     }
 
@@ -244,12 +244,48 @@ router.post("/login", async (req, res, next) => {
 router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({
-            where: { estaAprobado: req.body.estaAprobado },
-        });
+        // var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({
+        //     where: { estaAprobado: req.body.estaAprobado },
+        // });
+
+        console.log("LLEGO ACA --------------------------")
+
+        var solicitudesEmpresaPendientes =  await db.sequelize.query(`
+        
+      
+        SELECT 
+		SOL.id as 'id',
+		SOL.nombre as 'nombre', 
+		SOL.latitud as 'latitud', 
+		SOL.longitud as 'longitud', 
+		NFT.imagen as 'NFT',
+        TIP.nombre as 'TIPOEMPRESA',
+        TIPNFT.nombre as 'TIPONFT'
+	FROM SOLICITUD_EMPRESA SOL
+    INNER JOIN EMPRESA EM 
+    INNER JOIN SOLICITUD_NFT SOLI
+    ON SOLI.idEmpresa = EM.id
+    ON EM.idSolicitudEmpresa = SOL.id 
+    INNER JOIN EVIDENCIAS EVI
+    ON EVI.idSolicitudNFT = SOLI.id
+    INNER JOIN NFT 
+    ON NFT.idEvidencia = EVI.id
+    INNER JOIN TIPO_EMPRESA TIP
+    ON TIP.id = SOL.idTipoEmpresa
+	INNER JOIN TIPO_NFT TIPNFT
+    ON TIPNFT.id = SOLI.idTipoNFT WHERE SOL.estaAprobado = TRUE
+    
+    
+        `, { raw: true })
+        // const solic = await seq.query('SELECT * FROM SOLICITUD_EMPRESA', { raw: true });
+
+        // console.log(solic)
+        
+        // debugger
+        
         res.status(200).json({
             success: true,
-            solicitudEmpresaPendientes: solicitudesEmpresaPendientes,
+            solicitudEmpresaPendientes: solicitudesEmpresaPendientes[0],
         });
     } catch (err)
     {

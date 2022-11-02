@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
         },
         metadatos: DataTypes.STRING,
-        idEvidencia: DataTypes.INTEGER
+        idEvidencia: DataTypes.INTEGER,
+        imagen: DataTypes.STRING
     }, {
         freezeTableName: true,
         timestamps: false,
