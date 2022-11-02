@@ -334,8 +334,19 @@ router.post("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
 router.post("/obtenerTodasSolicitudesEmpresaNFT", async (req, res, next) => {
     try
     {
-        var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll({ where: { estaAprobado: false } });
-        res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa });
+        
+        var solicitudesNFTPorEmpresa =  await db.sequelize.query(`
+        
+      
+        SELECT S.id, SO.nombre, S.estaAprobado, S.pdf FROM SOLICITUD_NFT S 
+        INNER JOIN EMPRESA E ON S.idEmpresa = E.id 
+        INNER JOIN SOLICITUD_EMPRESA SO ON SO.id = E.idSolicitudEmpresa
+    WHERE S.estaAprobado = FALSE
+    
+    
+        `, { raw: true })
+
+        res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa[0] });
     } catch (err)
     {
         console.log(err);
@@ -348,12 +359,26 @@ router.post("/obtenerTodasSolicitudesEmpresaNFT", async (req, res, next) => {
 router.post("/obtenerSolicitudesEvidencias", async (req, res, next) => {
     try
     {
-        var solicitudesEmpresaPendientes = await Evidencias.findAll({
-            where: { estaAprobado: req.body.estaAprobado },
-        });
+
+
+        var solicitudesEmpresaPendientes =  await db.sequelize.query(`
+        
+                    
+        
+      
+        SELECT EVI.id, SO.nombre, S.estaAprobado, EVI.pdf FROM SOLICITUD_NFT S 
+        INNER JOIN EMPRESA E ON S.idEmpresa = E.id 
+        INNER JOIN SOLICITUD_EMPRESA SO ON SO.id = E.idSolicitudEmpresa
+        INNER JOIN EVIDENCIAS EVI ON EVI.idSolicitudNFT =  S.id
+    WHERE EVI.estaAprobado = FALSE
+    
+    
+        `, { raw: true })
+
+
         res.status(200).json({
             success: true,
-            evidenciasPendientes: solicitudesEmpresaPendientes,
+            evidenciasPendientes: solicitudesEmpresaPendientes[0],
         });
     } catch (err)
     {
