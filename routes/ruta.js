@@ -130,7 +130,7 @@ router.post("/NFT/:id", async (req, res, next) => {
 router.post("/solicitudNFT", async (req, res, next) => {
     try
     {
-        var token = varificarToken(req.headers["authorization"]);
+        var token = varificarToken(req.headers["autho-rization"]);
         var usuario = await Usuario.findOne({ where: { correo: token.name } });
         var solicitudNFT = await SolicitudNFT.create({
             pdf: req.body.pdf,
@@ -290,7 +290,7 @@ router.post("/obtenerTodasSolicitudesEmpresaNFT", async (req, res, next) => {
     next();
 });
 
-router.get("/obtenerSolicitudesEvidencias", async (req, res, next) => {
+router.post("/obtenerSolicitudesEvidencias", async (req, res, next) => {
     try
     {
         var solicitudesEmpresaPendientes = await Evidencias.findAll({
