@@ -241,7 +241,7 @@ router.post("/login", async (req, res, next) => {
     next();
 });
 
-router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
+router.post("/obtenerSolicitudesEmpresaMapa", async (req, res, next) => {
     try
     {
         // var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({
@@ -286,6 +286,25 @@ router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
         res.status(200).json({
             success: true,
             solicitudEmpresaPendientes: solicitudesEmpresaPendientes[0],
+        });
+    } catch (err)
+    {
+        res.status(500).send({ success: false, error: err });
+    }
+    next();
+});
+
+router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
+    try
+    {
+        var solicitudesEmpresaPendientes = await SolicitudEmpresa.findAll({
+            where: { estaAprobado: req.body.estaAprobado },
+        });
+
+        
+        res.status(200).json({
+            success: true,
+            solicitudEmpresaPendientes: solicitudesEmpresaPendientes,
         });
     } catch (err)
     {
