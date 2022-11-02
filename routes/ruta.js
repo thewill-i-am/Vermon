@@ -334,7 +334,7 @@ router.post("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
 router.post("/obtenerTodasSolicitudesEmpresaNFT", async (req, res, next) => {
     try
     {
-        var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll();
+        var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll({ where: { estaAprobado: false } });
         res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa });
     } catch (err)
     {
