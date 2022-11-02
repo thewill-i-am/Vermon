@@ -74,6 +74,27 @@ router.post("/empresa/:id", async (req, res, next) => {
     next();
 });
 
+
+router.post("/solicitudNFT/:id", async (req, res, next) => {
+    try
+    {
+        var sol = await SolicitudNFT.findOne({ where: { id: req.params.id } });
+        console.log(sol.id)
+        sol.set({
+            estaAprobado: req.body.estaAprobado,
+        });
+        await sol.save();
+
+        res.status(200).json({ success: true, solicitud: sol });
+    } catch (err)
+    {
+        console.error(err)
+        res.status(500).send({ success: false, error: err });
+    }
+
+    next();
+});
+
 router.post("/NFT/:id", async (req, res, next) => {
     try
     {
@@ -155,20 +176,21 @@ router.post("/empresaSolicitudNFT", async (req, res, next) => {
 router.post("/crearEvidencias", async (req, res, next) => {
     try
     {
-        var empresaSolicitudNFT = await EmpresaSolicitudNFT.findOne({
+        var empresaSolicitudNFT = await SolicitudNFT.findOne({
             where: { id: req.body.idEmpresaSolicitudNFT },
         });
 
         var evidencias = await Evidencias.create({
             imagen: req.body.imagen,
             video: req.body.video,
-            pdf: req.body.pdf,
-            idEmpresaSolicitudNFT: empresaSolicitudNFT.id,
+            pdf: req.body.Documento,
+            idSolicitudNFT: empresaSolicitudNFT.id,
             estaAprobado: 0,
         });
         res.status(200).json({ success: true, evidencia: evidencias });
     } catch (err)
     {
+        console.error(err);
         res.status(500).send({ success: false, error: err });
     }
 
@@ -196,10 +218,9 @@ router.post("/cambioDePassword", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
     try
     {
-        console.log("llego aca");
         var usuario = await Usuario.findOne({ where: { correo: req.body.correo } });
         const user = { name: req.body.correo, password: usuario.password };
-        const token = jwt.sign(user, "elbotas", { expiresIn: "3m" });
+        const token = jwt.sign(user, "elbotas", { expiresIn: "10m" });
         const validPassword = await bcrypt.compare(
             req.body.password,
             usuario.password
@@ -240,11 +261,25 @@ router.post("/obtenerSolicitudesEmpresa", async (req, res, next) => {
 router.post("/obtenerSolicitudesEmpresaNFT", async (req, res, next) => {
     try
     {
-        var token = varificarToken(req.headers["authorization"]);
+        var token = varificarToken(req.headers["autho-rization"]);
         var usuario = await Usuario.findOne({ where: { correo: token.name } });
         var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll({
-            where: { idEmpresa: usuario.idEmpresa },
+            where: { idEmpresa: usuario.idEmpresa , estaAprobado: req.body.estaAprobado },
         });
+        res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa });
+    } catch (err)
+    {
+        console.log(err);
+        res.status(500).send({ success: false, error: err });
+    }
+
+    next();
+});
+
+router.post("/obtenerTodasSolicitudesEmpresaNFT", async (req, res, next) => {
+    try
+    {
+        var solicitudesNFTPorEmpresa = await SolicitudNFT.findAll();
         res.status(200).json({ success: true, TipoNFT: solicitudesNFTPorEmpresa });
     } catch (err)
     {
